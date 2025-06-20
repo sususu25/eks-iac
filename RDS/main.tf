@@ -26,11 +26,12 @@ resource "random_password" "master_password" {
 }
 
 resource "aws_rds_cluster" "aurora_pg" {
-  cluster_identifier      = "aurora-postgresql-cluster"
+  cluster_identifier      = "aurora-pg-cluster"
   engine                  = "aurora-postgresql"
-  engine_version          = "13.7"
+  engine_mode             = "provisioned"
+  engine_version          = "13.13"
   availability_zones      = var.availability_zones
-  database_name           = "maindb"
+  database_name           = "mypgdb"
   master_username         = jsondecode(aws_secretsmanager_secret_version.db_credentials.secret_string)["username"]
   master_password         = jsondecode(aws_secretsmanager_secret_version.db_credentials.secret_string)["password"]
   db_subnet_group_name    = aws_db_subnet_group.aurora_pg.name
@@ -42,7 +43,7 @@ resource "aws_rds_cluster_instance" "aurora_pg" {
   count              = 2
   identifier         = "aurora-pg-instance-${count.index}"
   cluster_identifier = aws_rds_cluster.aurora_pg.id
-  instance_class     = "db.r5.large"
+  instance_class     = "db.t3.medium"
   engine             = aws_rds_cluster.aurora_pg.engine
   engine_version     = aws_rds_cluster.aurora_pg.engine_version
 }

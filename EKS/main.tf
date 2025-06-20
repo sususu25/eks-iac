@@ -46,6 +46,11 @@ resource "aws_eks_cluster" "main" {
   tags = {
     Environment = "Testing"
   }
+
+  timeouts {
+    create = "60m"
+    delete = "60m"
+  }
 }
 
 resource "aws_iam_role" "nodegroup" {

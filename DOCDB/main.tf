@@ -28,6 +28,7 @@ resource "random_password" "master_password" {
 resource "aws_docdb_cluster" "main" {
   cluster_identifier      = "docdb-cluster"
   engine                  = "docdb"
+  engine_version          = "5.0.0"
   master_username         = jsondecode(aws_secretsmanager_secret_version.db_credentials.secret_string)["username"]
   master_password         = jsondecode(aws_secretsmanager_secret_version.db_credentials.secret_string)["password"]
   db_subnet_group_name    = aws_docdb_subnet_group.main.name

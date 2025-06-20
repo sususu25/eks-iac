@@ -131,3 +131,93 @@ resource "aws_route_table_association" "private_db" {
   subnet_id      = aws_subnet.private_db[count.index].id
   route_table_id = aws_route_table.private[count.index].id # Associate with the same private route tables
 }
+
+resource "aws_security_group" "vpc_endpoint" {
+  name        = "vpc-endpoint-sg"
+  description = "Security group for VPC endpoints"
+  vpc_id      = aws_vpc.main.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "vpc-endpoint-sg"
+  }
+}
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id       = aws_vpc.main.id
+  service_name = "com.amazonaws.ap-northeast-2.s3"
+  vpc_endpoint_type = "Gateway"
+  route_table_ids = [aws_route_table.private[0].id, aws_route_table.private[1].id]
+  tags = {
+    Name = "s3-vpc-endpoint"
+  }
+}
+
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.ap-northeast-2.ecr.api"
+  vpc_endpoint_type = "Interface"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.vpc_endpoint.id
+  ]
+  subnet_ids = [aws_subnet.private[0].id, aws_subnet.private[1].id]
+  tags = {
+    Name = "ecr-api-vpc-endpoint"
+  }
+}
+
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.ap-northeast-2.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.vpc_endpoint.id
+  ]
+  subnet_ids = [aws_subnet.private[0].id, aws_subnet.private[1].id]
+  tags = {
+    Name = "ecr-dkr-vpc-endpoint"
+  }
+}
+
+resource "aws_vpc_endpoint" "sts" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.ap-northeast-2.sts"
+  vpc_endpoint_type = "Interface"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.vpc_endpoint.id
+  ]
+  subnet_ids = [aws_subnet.private[0].id, aws_subnet.private[1].id]
+  tags = {
+    Name = "sts-vpc-endpoint"
+  }
+}
+
+resource "aws_vpc_endpoint" "ec2" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.ap-northeast-2.ec2"
+  vpc_endpoint_type = "Interface"
+  private_dns_enabled = true
+  security_group_ids = [
+    aws_security_group.vpc_endpoint.id
+  ]
+  subnet_ids = [aws_subnet.private[0].id, aws_subnet.private[1].id]
+  tags = {
+    Name = "ec2-vpc-endpoint"
+  }
+}
