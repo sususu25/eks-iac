@@ -44,6 +44,30 @@
 
 - AWS 계정과 로컬에 설정된 AWS 자격 증명 (Access Key)
 - Terraform CLI (v1.x 이상) 설치
+- **사용자 AWS 계정에 등록된 EC2 Key Pair**
+
+### 사용자화 (Customization)
+
+이 인프라를 다른 AWS 계정이나 다른 설정으로 배포하려면, 루트 디렉토리에 `terraform.tfvars` 라는 파일을 생성하고 아래 내용을 복사하여 자신의 환경에 맞게 값을 수정해야 합니다.
+
+**주의:** `terraform.tfvars` 파일은 민감한 정보를 포함할 수 있으므로 절대 Git에 커밋해서는 안 됩니다. (`.gitignore`에 이미 추가되어 있습니다.)
+
+```hcl
+# terraform.tfvars
+
+# --- General Settings ---
+aws_region   = "ap-northeast-2"
+project_name = "fowarding-assist"
+
+# --- EKS Settings ---
+cluster_name = "fowarding-assist-eks"
+# 사용하려는 EC2 Key Pair의 이름을 AWS 콘솔에서 확인하여 입력하세요.
+# 이 Key Pair가 없으면 EKS 노드에 접근할 수 없습니다.
+ssh_key_name = "prod-ssh-key"
+
+# --- RDS Settings ---
+db_username = "postgres"
+```
 
 ### 배포 및 변경
 
@@ -128,6 +152,30 @@ This Terraform project is structured modularly as follows:
 
 - An AWS account and locally configured AWS credentials (Access Key).
 - Terraform CLI (v1.x or later) installed.
+- **An EC2 Key Pair registered in your AWS account.**
+
+### Customization
+
+To deploy this infrastructure in a different AWS account or with different settings, create a file named `terraform.tfvars` in the root directory, copy the content below, and modify the values to match your environment.
+
+**Caution:** The `terraform.tfvars` file may contain sensitive information and should never be committed to Git. (It has already been added to `.gitignore`).
+
+```hcl
+# terraform.tfvars
+
+# --- General Settings ---
+aws_region   = "ap-northeast-2"
+project_name = "fowarding-assist"
+
+# --- EKS Settings ---
+cluster_name = "fowarding-assist-eks"
+# Enter the name of the EC2 Key Pair you want to use, as seen in the AWS console.
+# Without this Key Pair, you cannot access the EKS nodes.
+ssh_key_name = "prod-ssh-key"
+
+# --- RDS Settings ---
+db_username = "postgres"
+```
 
 ### Deployment and Modifications
 
