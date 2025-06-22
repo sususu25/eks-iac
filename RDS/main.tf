@@ -7,8 +7,12 @@ resource "aws_db_subnet_group" "aurora_pg" {
   }
 }
 
+resource "random_pet" "secret_suffix" {
+  length = 2 # Creates a name like "witty-cat"
+}
+
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name = "aurora-pg-master-credentials"
+  name = "aurora-pg-master-credentials-${random_pet.secret_suffix.id}"
 }
 
 resource "aws_secretsmanager_secret_version" "db_credentials" {

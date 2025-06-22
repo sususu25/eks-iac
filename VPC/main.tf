@@ -109,6 +109,15 @@ resource "aws_route_table" "private" {
     }
 }
 
+resource "aws_route_table" "private_db" {
+  count  = 2
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "eks-rtb-private-db-2${["a", "c"][count.index]}"
+  }
+}
+
 resource "aws_route_table_association" "private" {
   count          = 2
   subnet_id      = aws_subnet.private[count.index].id
@@ -129,7 +138,7 @@ resource "aws_subnet" "private_db" {
 resource "aws_route_table_association" "private_db" {
   count          = 2
   subnet_id      = aws_subnet.private_db[count.index].id
-  route_table_id = aws_route_table.private[count.index].id # Associate with the same private route tables
+  route_table_id = aws_route_table.private_db[count.index].id
 }
 
 resource "aws_security_group" "vpc_endpoint" {
