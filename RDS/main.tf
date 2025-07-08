@@ -12,7 +12,6 @@ resource "aws_rds_cluster" "aurora_pg" {
   engine                      = "aurora-postgresql"
   engine_mode                 = "provisioned"
   engine_version              = "13.13"
-  availability_zones          = var.availability_zones
   database_name               = "mypgdb"
   master_username             = "dbadmin"
   manage_master_user_password = true

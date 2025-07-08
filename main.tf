@@ -109,7 +109,10 @@ resource "aws_iam_policy" "external_secrets_policy" {
     Statement = [
       {
         Effect   = "Allow",
-        Action   = "secretsmanager:GetSecretValue",
+        Action = [
+          "secretsmanager:GetSecretValue",
+          "secretsmanager:DescribeSecret"
+        ],
         # 이제 RDS 시크릿이 아닌, 우리가 만든 "커스텀 시크릿"의 ARN을 참조합니다.
         Resource = [aws_secretsmanager_secret.custom_db_connection_details.arn]
       }
